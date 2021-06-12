@@ -1,0 +1,26 @@
+on:
+  workflow_dispatch:
+    inputs:
+      username:
+        description: 'Person to greet'
+        required: true
+        default: 'Mona the Octocat'
+name: deploy
+jobs:
+  deploy:
+    name: deploy to cluster
+    runs-on: ubuntu-latest
+    steps:
+     - name: Checkout
+       uses: actions/checkout@v2
+       with:
+        ref: 'develop'
+     - name: build and push to docker
+       uses: docker/build-push-action@v2
+       with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        repository: tagost/tagost
+        tag_with_ref: true
+        tag_with_sha: true
+        tags: ${{ github.sha }}
